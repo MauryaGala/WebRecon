@@ -1,4 +1,5 @@
 import argparse
+import json
 from scanner.port_scanner import scan_ports
 from scanner.ssl_checker import get_ssl_info
 from scanner.http_headers import get_http_headers
@@ -18,6 +19,7 @@ def main():
     print(f"Open Ports: {open_ports}")
 
     # SSL Check (if HTTPS is open)
+    ssl_info = {}
     if 443 in open_ports:
         print("\n[*] Checking SSL Certificate...")
         ssl_info = get_ssl_info(target)
@@ -38,6 +40,24 @@ def main():
     vulns = check_vulns(headers)
     for vuln, found in vulns.items():
         print(f"[!] {vuln} vulnerability {'found' if found else 'not found'}")
+
+    # Save Results to JSON
+    results = {
+        "target": target,
+        "open_ports": open_ports,
+        "ssl_info": ssl_info,
+        "http_headers": dict(headers) if "error" not in headers else "Error fetching headers",
+        "vulnerabilities": vulns
+    }
+
+    # Create safe filename
+    safe_target = target.replace("/", "_").replace("\\", "_").replace(":", "_")
+    filename = f"{safe_target}_scan_results.json"
+
+    with open(filename, "w") as f:
+        json.dump(results, f, indent=4)
+
+    print(f"\n[+] Scan results saved to '{filename}'")
 
 if __name__ == "__main__":
     main()
