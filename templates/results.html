@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scan Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Scan Results for {{ request.form.target }}</h1>
+
+        <pre>{{ output }}</pre>
+
+        {% if json_file %}
+            <p><a href="/download/{{ json_file }}">📥 Download JSON Results</a></p>
+        {% endif %}
+
+        <p><a href="/">⬅️ Back to Scan Form</a></p>
+    </div>
+</body>
+</html>
